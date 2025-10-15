@@ -1,4 +1,4 @@
-# 🏥 건양대학교병원 환자관리시스템
+# 🏥 Patient Management System
 
 > Flask 기반의 현대적인 환자 관리 웹 애플리케이션
 
@@ -48,8 +48,8 @@
 
 1. **저장소 클론**
 ```bash
-git clone https://github.com/YOUR_USERNAME/konyang-patient-management.git
-cd konyang-patient-management
+git clone https://github.com/nogeonu/patient-management.git
+cd patient-management
 ```
 
 2. **가상환경 생성 및 활성화**
@@ -68,23 +68,21 @@ pip install -r requirements.txt
 4. **데이터베이스 설정**
 ```bash
 # MySQL 서버에 접속하여 데이터베이스 생성
-mysql -u root -p < gcp_mysql_setup.sql
+mysql -u root -p < database/gcp_mysql_setup.sql
 ```
 
-5. **애플리케이션 설정**
-```python
-# patient_management_app.py 파일에서 데이터베이스 연결 정보 수정
-self.host = "your_host"
-self.user = "your_user"
-self.password = "your_password"
-self.db_name = "your_database"
+5. **환경변수 설정**
+```bash
+# 환경변수 파일 생성
+cp env.example .env
+# .env 파일을 열어서 데이터베이스 정보 수정
 ```
 
 6. **애플리케이션 실행**
 ```bash
 python patient_management_app.py
 # 또는
-./run.sh  # macOS/Linux
+./scripts/run.sh
 ```
 
 7. **브라우저에서 접속**
@@ -95,65 +93,56 @@ http://localhost:5004
 ## 📁 프로젝트 구조
 
 ```
-환자관리_대시보드/
-├── patient_management_app.py    # 메인 Flask 애플리케이션
-├── requirements.txt              # Python 패키지 의존성
-├── README.md                     # 프로젝트 문서
-├── .gitignore                    # Git 제외 파일 목록
-├── run.sh                        # 실행 스크립트 (Unix)
-├── gcp_mysql_setup.sql           # 데이터베이스 초기화 스크립트
+patient-management/
+├── 📄 patient_management_app.py    # 메인 Flask 애플리케이션
+├── 📄 requirements.txt              # Python 패키지 의존성
+├── 📄 env.example                  # 환경변수 설정 예제
+├── 📄 README.md                     # 프로젝트 문서
+├── 📄 LICENSE                       # MIT 라이센스
+├── 📄 .gitignore                    # Git 제외 파일 목록
 │
-├── templates/                    # HTML 템플릿
-│   ├── base.html                # 기본 레이아웃
-│   ├── dashboard.html           # 대시보드
-│   ├── patients.html            # 환자 목록
-│   ├── add_patient.html         # 환자 등록
-│   ├── edit_patient.html        # 환자 수정
-│   ├── hospitals.html           # 병원 현황
-│   └── db_info.html             # DB 정보 페이지
+├── 📁 templates/                    # HTML 템플릿
+│   ├── base.html                   # 기본 레이아웃
+│   ├── dashboard.html              # 대시보드
+│   ├── patients.html               # 환자 목록
+│   ├── add_patient.html            # 환자 등록
+│   ├── edit_patient.html           # 환자 수정
+│   └── hospitals.html              # 병원 현황
 │
-├── static/                       # 정적 파일
+├── 📁 static/                       # 정적 파일
 │   ├── css/
-│   │   └── style.css            # 커스텀 스타일시트
+│   │   └── style.css              # 커스텀 스타일시트
 │   ├── js/
-│   │   └── app.js               # JavaScript 기능
-│   └── images/                  # 이미지 파일
+│   │   └── app.js                 # JavaScript 기능
+│   └── images/                    # 이미지 파일
 │
-└── gcp_deploy/                   # GCP 배포 설정
-    ├── gcp_setup_guide.md
-    ├── requirements.txt
-    └── start_server.sh
+├── 📁 database/                     # 데이터베이스 관련
+│   └── gcp_mysql_setup.sql        # 초기화 스크립트
+│
+├── 📁 scripts/                      # 실행 스크립트
+│   ├── run.sh                     # 애플리케이션 실행
+│   └── deploy_to_gcp.sh           # GCP 배포 스크립트
+│
+├── 📁 docs/                         # 문서
+│   ├── README.md                  # 문서 가이드
+│   ├── guides/                    # 상세 가이드들
+│   │   ├── QUICK_START.md         # 빠른 시작
+│   │   ├── DEPLOY.md              # 배포 가이드
+│   │   ├── CONTRIBUTING.md        # 기여 가이드
+│   │   └── ...                    # 기타 가이드들
+│   └── images/                    # 스크린샷
+│
+├── 📁 gcp_deploy/                   # GCP 배포 설정
+│   ├── gcp_setup_guide.md
+│   ├── patient_management_app.py
+│   ├── requirements.txt
+│   ├── start_server.sh
+│   ├── static/ → templates/
+│
+└── 📁 .github/                      # GitHub 설정
+    └── workflows/
+        └── ci.yml                 # CI/CD 파이프라인
 ```
-
-## 🎨 화면 구성
-
-### 1. 대시보드 (/)
-- 실시간 통계 카드 (총 환자 수, 높은 우선순위, 총 진료비, 병원 수)
-- 우선순위 상위 환자 목록 (Top 10)
-- 병원 현황 요약
-- 빠른 액션 버튼
-
-### 2. 환자 목록 (/patients)
-- 전체 환자 목록 테이블
-- 순위, 이름, 나이, 질병, 중증도, 우선순위 표시
-- 수정/삭제 기능
-- 이름/전화번호 검색
-
-### 3. 환자 등록 (/patients/add)
-- 환자 정보 입력 폼
-- 병원 선택 드롭다운
-- 질병 선택
-- 중증도 선택 (경증/중등도/중증)
-- 성별, 전화번호 입력
-
-### 4. 환자 수정 (/patients/<id>/edit)
-- 기존 환자 정보 수정
-- 진료비/우선순위 자동 재계산
-
-### 5. 병원 현황 (/hospitals)
-- 병원별 환자 수 통계
-- 중증도별 환자 분포
-- 전문분야별 현황
 
 ## 🔧 기술 스택
 
@@ -189,7 +178,6 @@ http://localhost:5004
 | POST | `/patients/<id>/edit` | 환자 수정 처리 |
 | POST | `/patients/<id>/delete` | 환자 삭제 |
 | GET | `/hospitals` | 병원 현황 |
-| GET | `/db-info` | 데이터베이스 정보 |
 
 ### REST API
 | Method | Endpoint | 설명 |
@@ -229,16 +217,33 @@ http://localhost:5004
 - ✅ 입력 유효성 검사
 - ✅ 안전한 비밀번호 관리 (환경변수 권장)
 
-## 🌐 GCP 배포
+## 🌐 배포
 
-상세한 배포 가이드는 `gcp_deploy/gcp_setup_guide.md` 파일을 참고하세요.
+### 로컬 개발
+```bash
+python patient_management_app.py
+```
 
-**간단한 배포 절차:**
-1. GCP 프로젝트 생성
-2. Cloud SQL 인스턴스 설정
-3. Compute Engine VM 생성
-4. 애플리케이션 배포
-5. 방화벽 규칙 설정
+### GCP 배포
+```bash
+./scripts/deploy_to_gcp.sh
+```
+
+### Docker 배포
+```bash
+docker-compose up -d
+```
+
+자세한 배포 방법은 [`docs/guides/DEPLOY.md`](docs/guides/DEPLOY.md)를 참고하세요.
+
+## 📚 문서
+
+- 📖 [빠른 시작 가이드](docs/guides/QUICK_START.md)
+- 📖 [배포 가이드](docs/guides/DEPLOY.md)
+- 📖 [기여 가이드](docs/guides/CONTRIBUTING.md)
+- 📖 [Git 사용법](docs/guides/GIT_GUIDE.md)
+- 📖 [프로젝트 요약](docs/guides/PROJECT_SUMMARY.md)
+- 📖 [변경 이력](docs/guides/CHANGELOG.md)
 
 ## 🚨 문제 해결
 
@@ -247,7 +252,7 @@ http://localhost:5004
 [ERROR] DB 연결 실패
 ```
 **해결방법:**
-- MySQL 서버 상태 확인: `systemctl status mysql`
+- MySQL 서버 상태 확인
 - 연결 정보 (host, user, password) 확인
 - 방화벽 규칙 확인
 
@@ -257,13 +262,12 @@ Address already in use
 ```
 **해결방법:**
 - 다른 포트 사용: `app.run(port=5001)`
-- 기존 프로세스 종료: `lsof -ti:5004 | xargs kill -9`
+- 기존 프로세스 종료
 
 ### 템플릿 오류
 **해결방법:**
 - `templates/` 폴더 경로 확인
 - 템플릿 파일 존재 여부 확인
-- Jinja2 문법 오류 확인
 
 ## 📈 향후 개선 계획
 
@@ -278,13 +282,7 @@ Address already in use
 
 ## 🤝 기여하기
 
-프로젝트 개선에 기여하고 싶으시다면:
-
-1. Fork this repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+프로젝트 개선에 기여하고 싶으시다면 [`docs/guides/CONTRIBUTING.md`](docs/guides/CONTRIBUTING.md)를 참고하세요.
 
 ## 📝 라이센스
 
@@ -296,11 +294,11 @@ Address already in use
 
 ## 📞 문의
 
-프로젝트 관련 문의사항이나 버그 리포트는 GitHub Issues를 통해 등록해주세요.
+프로젝트 관련 문의사항이나 버그 리포트는 [GitHub Issues](https://github.com/nogeonu/patient-management/issues)를 통해 등록해주세요.
 
 ---
 
-**건양대학교병원 환자관리시스템 v1.3**  
+**Patient Management System v1.3**  
 *최종 업데이트: 2025년 10월*
 
 Made with ❤️ by 건양대학교 바이오메디컬팀
