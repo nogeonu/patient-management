@@ -1,0 +1,602 @@
+/* 건양대학교병원 환자관리시스템 - 스크린샷 기반 스타일 */
+
+:root {
+    --primary-blue: #4285f4;
+    --stat-blue: #4285f4;
+    --stat-red: #ea4335;
+    --stat-green: #34a853;
+    --stat-cyan: #00bcd4;
+    --header-blue: #4285f4;
+    --text-dark: #333;
+    --text-light: #666;
+    --border-light: #e0e0e0;
+    --bg-light: #f8f9fa;
+}
+
+/* 전체 레이아웃 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* 통계 카드 스타일 (스크린샷 기반) */
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
+.stat-card-blue {
+    border-left: 4px solid var(--stat-blue);
+}
+
+.stat-card-red {
+    border-left: 4px solid var(--stat-red);
+}
+
+.stat-card-green {
+    border-left: 4px solid var(--stat-green);
+}
+
+.stat-card-cyan {
+    border-left: 4px solid var(--stat-cyan);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-title {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.stat-number {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--text-dark);
+    line-height: 1;
+}
+
+.stat-subtitle {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
+.stat-icon {
+    font-size: 32px;
+    opacity: 0.3;
+}
+
+.stat-card-blue .stat-icon {
+    color: var(--stat-blue);
+}
+
+.stat-card-red .stat-icon {
+    color: var(--stat-red);
+}
+
+.stat-card-green .stat-icon {
+    color: var(--stat-green);
+}
+
+.stat-card-cyan .stat-icon {
+    color: var(--stat-cyan);
+}
+
+/* 메인 카드 스타일 */
+.main-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.main-card-header {
+    background: var(--header-blue);
+    color: white;
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+.main-card-body {
+    padding: 0;
+}
+
+/* 환자 테이블 스타일 */
+.patient-table-container {
+    overflow-x: auto;
+}
+
+.patient-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.patient-table thead th {
+    background: #f8f9fa;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.patient-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.patient-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.patient-table td {
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.rank-1 { background: var(--stat-red); }
+.rank-2 { background: #ff9800; }
+.rank-3 { background: #ff9800; }
+.rank-4 { background: #ff9800; }
+.rank-5 { background: var(--stat-green); }
+.rank-6 { background: var(--stat-green); }
+.rank-7 { background: var(--stat-green); }
+.rank-8 { background: var(--stat-green); }
+.rank-9 { background: var(--stat-green); }
+.rank-10 { background: var(--stat-green); }
+.rank-11, .rank-12, .rank-13, .rank-14, .rank-15 { background: var(--stat-cyan); }
+
+.patient-name {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.severity-badge, .priority-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+}
+
+.severity-high, .priority-high {
+    background: var(--stat-red);
+}
+
+.severity-medium, .priority-medium {
+    background: #ff9800;
+}
+
+.severity-low, .priority-low {
+    background: var(--stat-green);
+}
+
+.cost {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.hospital {
+    color: var(--text-light);
+}
+
+/* 병원 현황 스타일 */
+.hospital-list {
+    padding: 20px;
+}
+
+.hospital-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.hospital-item:last-child {
+    border-bottom: none;
+}
+
+.hospital-info h6 {
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.hospital-location {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.hospital-badge {
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.hospital-badge-green {
+    background: var(--stat-green);
+}
+
+.hospital-badge-blue {
+    background: var(--stat-blue);
+}
+
+.hospital-badge-cyan {
+    background: var(--stat-cyan);
+}
+
+.hospital-info-center {
+    text-align: center;
+    width: 100%;
+    padding: 20px;
+}
+
+/* 액션 버튼 스타일 */
+.action-card-header {
+    background: var(--stat-green);
+    color: white;
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+.action-buttons {
+    padding: 20px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.action-btn-green {
+    background: var(--stat-green);
+}
+
+.action-btn-blue {
+    background: var(--stat-blue);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    color: white;
+    text-decoration: none;
+}
+
+.action-btn i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* 커스텀 네비게이션 바 (스크린샷 기반) */
+.custom-navbar {
+    background: var(--header-blue);
+    color: white;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    max-width: 100%;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    padding: 15px 0;
+    margin-right: 40px;
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.nav-item {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    padding: 15px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.nav-item:hover {
+    color: white;
+    background: rgba(255,255,255,0.1);
+    text-decoration: none;
+}
+
+.nav-item.active {
+    color: white;
+    border-bottom-color: white;
+    background: rgba(255,255,255,0.1);
+}
+
+.navbar-right {
+    margin-left: auto;
+}
+
+.navbar-time {
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+    padding: 15px 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .navbar-menu {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .navbar-right {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .stat-card {
+        margin-bottom: 15px;
+    }
+    
+    .patient-table {
+        font-size: 12px;
+    }
+    
+    .hospital-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* 폼 스타일 */
+.form-control, .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* 알림 스타일 */
+.alert {
+    border-radius: 0.75rem;
+    border: none;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+}
+
+/* 모달 스타일 */
+.modal-content {
+    border-radius: 0.75rem;
+    border: none;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    border-radius: 0 0 0.75rem 0.75rem;
+}
+
+/* 진행률 바 */
+.progress {
+    border-radius: 0.5rem;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 0.5rem;
+    transition: width 0.6s ease;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .display-6 {
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* 로딩 애니메이션 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 커스텀 스크롤바 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 푸터 스타일 */
+footer {
+    margin-top: auto;
+    background-color: #f8f9fa !important;
+    border-top: 1px solid #dee2e6;
+}
+
+/* 중증도 카드 선택 효과 */
+.severity-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.severity-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.severity-card.selected {
+    transform: scale(1.02);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* 애니메이션 효과 */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* 건양대학교 브랜딩 */
+.konyang-gradient {
+    background: linear-gradient(135deg, var(--konyang-blue) 0%, var(--konyang-light-blue) 100%);
+}
+
+.konyang-shadow {
+    box-shadow: 0 0.5rem 1rem rgba(30, 58, 138, 0.15);
+}
+
+/* 상태 표시 */
+.status-online {
+    position: relative;
+}
+
+.status-online::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    background-color: #28a745;
+    border: 2px solid white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+}

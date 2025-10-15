@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}건양대학교병원 환자관리시스템{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <!-- 상단 네비게이션 바 -->
+    <nav class="custom-navbar">
+        <!-- 네비게이션 컨테이너 -->
+        <div class="navbar-container">
+            <!-- 브랜드/로고 영역 -->
+            <div class="navbar-brand">
+                <!-- 병원 아이콘 -->
+                <i class="bi bi-hospital me-2"></i>
+                <!-- 병원 이름 -->
+                대전광역시 병원 관리시스템
+            </div>
+            <!-- 네비게이션 메뉴 -->
+            <div class="navbar-menu">
+                <!-- 대시보드 링크 -->
+                <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-house"></i> 대시보드
+                </a>
+                <a href="{{ url_for('list_patients') }}" class="nav-item {% if request.endpoint == 'list_patients' %}active{% endif %}">
+                    <i class="bi bi-people"></i> 환자 목록
+                </a>
+                <a href="{{ url_for('add_patient') }}" class="nav-item {% if request.endpoint in ['add_patient', 'edit_patient'] %}active{% endif %}">
+                    <i class="bi bi-person-plus"></i> 환자 등록
+                </a>
+                <a href="{{ url_for('list_hospitals') }}" class="nav-item {% if request.endpoint == 'list_hospitals' %}active{% endif %}">
+                    <i class="bi bi-building"></i> 병원 정보
+                </a>
+                <a href="{{ url_for('db_info') }}" class="nav-item {% if request.endpoint == 'db_info' %}active{% endif %}">
+                    <i class="bi bi-database"></i> DB 정보
+                </a>
+            </div>
+            
+            <div class="navbar-right">
+                <span class="navbar-time">
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    우선순위 갱신
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="container-fluid mt-4">
+        <!-- Flash 메시지 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row">
+                    <div class="col-12">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                <i class="bi bi-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }}"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-muted">건양대학교병원 환자관리시스템</h6>
+                    <p class="text-muted small">대전광역시 서구 • 대학병원</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="text-muted small">
+                        실시간 업데이트: {{ current_time if current_time else '' }}<br>
+                        © 2025 건양대학교병원. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}데이터베이스 정보{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2><i class="fas fa-database"></i> 프로젝트 데이터베이스 정보</h2>
+                    <p class="mb-0">건양대학교 바이오메디컬 환자관리 시스템</p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>팀원 공지:</strong> 아래 정보를 사용하여 데이터베이스에 연결할 수 있습니다.
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-secondary">
+                                <div class="card-header bg-secondary text-white">
+                                    <h5><i class="fas fa-server"></i> 연결 정보</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">호스트 (Host):</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="{{ db_info.host }}" readonly id="host">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('host')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">포트 (Port):</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="{{ db_info.port }}" readonly id="port">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('port')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">데이터베이스명 (Database):</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="{{ db_info.database }}" readonly id="database">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('database')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5><i class="fas fa-key"></i> 인증 정보</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">사용자명 (Username):</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="{{ db_info.user }}" readonly id="user">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('user')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">비밀번호 (Password):</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" value="{{ db_info.password }}" readonly id="password">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                                <i class="fas fa-eye" id="passwordIcon"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('password')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-success mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h5><i class="fas fa-terminal"></i> 환경변수 설정</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">터미널에서 다음 명령어를 실행하여 환경변수를 설정할 수 있습니다:</p>
+                            <div class="bg-dark text-light p-3 rounded">
+                                <code id="envVars">export DB_HOST="{{ db_info.host }}"<br>
+export DB_USER="{{ db_info.user }}"<br>
+export DB_PASSWORD="{{ db_info.password }}"<br>
+export DB_NAME="{{ db_info.database }}"</code>
+                            </div>
+                            <button class="btn btn-success mt-2" onclick="copyToClipboard('envVars')">
+                                <i class="fas fa-copy"></i> 환경변수 복사
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white">
+                            <h5><i class="fas fa-link"></i> 연결 문자열 예시</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">MySQL 연결 문자열:</label>
+                                <div class="bg-light p-2 rounded">
+                                    <code id="mysqlConnection">mysql://{{ db_info.user }}:{{ db_info.password }}@{{ db_info.host }}:{{ db_info.port }}/{{ db_info.database }}</code>
+                                </div>
+                                <button class="btn btn-info btn-sm mt-1" onclick="copyToClipboard('mysqlConnection')">
+                                    <i class="fas fa-copy"></i> 복사
+                                </button>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Python mysql.connector 예시:</label>
+                                <div class="bg-light p-2 rounded">
+                                    <code id="pythonConnection">mysql.connector.connect(<br>
+&nbsp;&nbsp;host="{{ db_info.host }}",<br>
+&nbsp;&nbsp;port={{ db_info.port }},<br>
+&nbsp;&nbsp;user="{{ db_info.user }}",<br>
+&nbsp;&nbsp;password="{{ db_info.password }}",<br>
+&nbsp;&nbsp;database="{{ db_info.database }}"<br>
+)</code>
+                                </div>
+                                <button class="btn btn-info btn-sm mt-1" onclick="copyToClipboard('pythonConnection')">
+                                    <i class="fas fa-copy"></i> 복사
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>보안 주의사항:</strong> 
+                        <ul class="mb-0 mt-2">
+                            <li>이 정보는 팀 프로젝트용입니다.</li>
+                            <li>외부에 공유하지 마세요.</li>
+                            <li>프로덕션 환경에서는 환경변수를 사용하세요.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> 대시보드로 돌아가기
+                        </a>
+                        <button class="btn btn-success" onclick="testConnection()">
+                            <i class="fas fa-plug"></i> 연결 테스트
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>마지막 업데이트: {{ current_time }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    let textToCopy = element.value || element.textContent || element.innerText;
+    
+    // HTML 태그 제거 및 정리
+    textToCopy = textToCopy.replace(/<br>/g, '\n').replace(/&nbsp;/g, ' ');
+    
+    navigator.clipboard.writeText(textToCopy).then(function() {
+        // 성공 알림
+        const button = event.target.closest('button');
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.classList.add('btn-success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('btn-success');
+        }, 2000);
+    }).catch(function(err) {
+        alert('복사에 실패했습니다: ' + err);
+    });
+}
+
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const passwordIcon = document.getElementById('passwordIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        passwordIcon.className = 'fas fa-eye-slash';
+    } else {
+        passwordField.type = 'password';
+        passwordIcon.className = 'fas fa-eye';
+    }
+}
+
+function testConnection() {
+    const button = event.target;
+    const originalHTML = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 테스트 중...';
+    button.disabled = true;
+    
+    fetch('/api/test_db_connection', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ 데이터베이스 연결 성공!');
+        } else {
+            alert('❌ 데이터베이스 연결 실패: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('❌ 연결 테스트 중 오류 발생: ' + error);
+    })
+    .finally(() => {
+        button.innerHTML = originalHTML;
+        button.disabled = false;
+    });
+}
+</script>
+{% endblock %}

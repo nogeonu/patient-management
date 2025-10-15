@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}환자 목록 - 건양대학교병원{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="display-6">
+                <i class="bi bi-people text-primary"></i>
+                환자 목록
+            </h1>
+            <div>
+                <a href="{{ url_for('add_patient') }}" class="btn btn-success">
+                    <i class="bi bi-person-plus"></i> 새 환자 등록
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 검색 폼 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('list_patients') }}" class="d-flex gap-3 align-items-end">
+                    <div class="flex-grow-1">
+                        <label for="search_name" class="form-label">
+                            <i class="bi bi-search"></i> 환자 이름 검색
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="search_name" 
+                               name="search_name" 
+                               value="{{ request.args.get('search_name', '') }}"
+                               placeholder="환자 이름을 입력하세요 (예: 홍길동)">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> 검색
+                        </button>
+                        {% if request.args.get('search_name') %}
+                        <a href="{{ url_for('list_patients') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> 전체보기
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if patients %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list"></i>
+                    {% if request.args.get('search_name') %}
+                        "{{ request.args.get('search_name') }}" 검색 결과 ({{ patients|length }}명)
+                    {% else %}
+                        전체 환자 목록 ({{ patients|length }}명)
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>순위</th>
+                                <th>이름</th>
+                                <th>나이</th>
+                                <th>성별</th>
+                                <th>전화번호</th>
+                                <th>질병</th>
+                                <th>중증도</th>
+                                <th>진료비</th>
+                                <th>총비용</th>
+                                <th>우선순위</th>
+                                <th>병원</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td><strong>{{ patient.id }}</strong></td>
+                                <td>
+                                    <span class="badge bg-{% if patient.rank <= 3 %}danger{% elif patient.rank <= 6 %}warning{% else %}secondary{% endif %}">
+                                        {{ patient.rank }}
+                                    </span>
+                                </td>
+                                <td><strong>{{ patient.name }}</strong></td>
+                                <td>{{ patient.age }}세</td>
+                                <td>
+                                    {% if patient.gender %}
+                                        <span class="badge bg-{% if patient.gender == '남성' %}primary{% else %}danger{% endif %} text-white">
+                                            {{ patient.gender }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if patient.phone %}
+                                        <a href="tel:{{ patient.phone }}" class="text-decoration-none">
+                                            {{ patient.phone }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ patient.disease }}</td>
+                                <td>
+                                    <span class="badge bg-{% if patient.severity == 3 %}danger{% elif patient.severity == 2 %}warning{% else %}success{% endif %}">
+                                        {% if patient.severity == 3 %}중증{% elif patient.severity == 2 %}중등도{% else %}경증{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ "{:,}".format(patient.treatment_cost) }}원</td>
+                                <td>{{ "{:,}".format(patient.total_cost|int) }}원</td>
+                                <td>
+                                    <span class="badge bg-{% if patient.priority == '높음' %}danger{% elif patient.priority == '중간' %}warning{% else %}success{% endif %}">
+                                        {{ patient.priority }}
+                                    </span>
+                                </td>
+                                <td>{{ patient.hospital_name or 'N/A' }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ url_for('edit_patient', patient_id=patient.id) }}" 
+                                           class="btn btn-outline-primary" title="수정">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" 
+                                                class="btn btn-outline-danger" 
+                                                title="삭제"
+                                                onclick="deletePatient({{ patient.id }}, '{{ patient.name }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 통계 요약 -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-danger">중증 환자</h5>
+                <p class="card-text display-6">{{ patients|selectattr('severity', 'equalto', 3)|list|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-warning">중등도 환자</h5>
+                <p class="card-text display-6">{{ patients|selectattr('severity', 'equalto', 2)|list|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-success">경증 환자</h5>
+                <p class="card-text display-6">{{ patients|selectattr('severity', 'equalto', 1)|list|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-info">평균 연령</h5>
+                <p class="card-text display-6">
+                    {% set ages = patients|map(attribute='age')|list %}
+                    {% if ages %}
+                        {{ "%.1f"|format(ages|sum / ages|length) }}세
+                    {% else %}
+                        0세
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-person-x display-1 text-muted"></i>
+                <h3 class="mt-3 text-muted">등록된 환자가 없습니다</h3>
+                <p class="text-muted">새로운 환자를 등록해보세요.</p>
+                <a href="{{ url_for('add_patient') }}" class="btn btn-success btn-lg">
+                    <i class="bi bi-person-plus"></i> 첫 환자 등록하기
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 삭제 확인 모달 -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">환자 삭제 확인</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong id="deletePatientName"></strong> 환자를 정말 삭제하시겠습니까?</p>
+                <p class="text-danger small">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    이 작업은 되돌릴 수 없습니다.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">삭제</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deletePatient(patientId, patientName) {
+    document.getElementById('deletePatientName').textContent = patientName;
+    document.getElementById('deleteForm').action = `/patients/${patientId}/delete`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

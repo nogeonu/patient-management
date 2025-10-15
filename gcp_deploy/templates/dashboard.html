@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}환자관리 대시보드 - 건양대학교병원{% endblock %}
+
+{% block content %}
+<!-- 대시보드 헤더 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="display-6 mb-0">
+                <i class="bi bi-speedometer2 text-dark me-2"></i>
+                환자관리 대시보드
+            </h1>
+            <div class="text-muted">
+                <i class="bi bi-clock me-1"></i>
+                실시간 업데이트 {{ current_time }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 통계 카드 -->
+<div class="row mb-4">
+    <!-- 총 환자 수 -->
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-blue">
+            <div class="stat-content">
+                <div class="stat-title">총 환자 수</div>
+                <div class="stat-number">{{ stats.total_patients }}</div>
+            </div>
+            <div class="stat-icon">
+                <i class="bi bi-people"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 높은 우선순위 -->
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-red">
+            <div class="stat-content">
+                <div class="stat-title">높은 우선순위</div>
+                <div class="stat-number">{{ stats.high_priority }}</div>
+            </div>
+            <div class="stat-icon">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 총 진료비 -->
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-green">
+            <div class="stat-content">
+                <div class="stat-title">총 진료비</div>
+                <div class="stat-number">{{ "{:,}".format(stats.total_cost) }}원</div>
+                <div class="stat-subtitle">W</div>
+            </div>
+            <div class="stat-icon">
+                <i class="bi bi-currency-exchange"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 병원 수 -->
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card stat-card-cyan">
+            <div class="stat-content">
+                <div class="stat-title">병원 수</div>
+                <div class="stat-number">{{ stats.hospital_count }}</div>
+            </div>
+            <div class="stat-icon">
+                <i class="bi bi-building"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 우선순위 상위 환자 목록 -->
+    <div class="col-lg-8 mb-4">
+        <div class="main-card">
+            <div class="main-card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ol me-2"></i>
+                    우선순위 상위 환자 (Top 10)
+                </h5>
+            </div>
+            <div class="main-card-body">
+                {% if patients %}
+                <div class="patient-table-container">
+                    <table class="patient-table">
+                        <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>이름</th>
+                                <th>나이</th>
+                                <th>질병</th>
+                                <th>중증도</th>
+                                <th>우선순위</th>
+                                <th>진료비</th>
+                                <th>병원</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>
+                                    <div class="rank-badge rank-{{ patient.rank }}">
+                                        {{ patient.rank }}
+                                    </div>
+                                </td>
+                                <td class="patient-name">{{ patient.name }}</td>
+                                <td>{{ patient.age }}세</td>
+                                <td>{{ patient.disease }}</td>
+                                <td>
+                                    <span class="severity-badge severity-{% if patient.severity == 3 %}high{% elif patient.severity == 2 %}medium{% else %}low{% endif %}">
+                                        {% if patient.severity == 3 %}중증{% elif patient.severity == 2 %}중등도{% else %}경증{% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="priority-badge priority-{% if patient.priority == '높음' %}high{% elif patient.priority == '중간' %}medium{% else %}low{% endif %}">
+                                        {{ patient.priority }}
+                                    </span>
+                                </td>
+                                <td class="cost">{{ "{:,}".format(patient.treatment_cost) }}원</td>
+                                <td class="hospital">{{ patient.hospital_name or 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-person-x"></i>
+                    <p>등록된 환자가 없습니다.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 병원 현황 -->
+    <div class="col-lg-4 mb-4">
+        <div class="main-card">
+            <div class="main-card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-building me-2"></i>
+                    병원 현황
+                </h5>
+            </div>
+            <div class="hospital-list">
+                {% if hospital_stats %}
+                    {% for hospital in hospital_stats %}
+                    <div class="hospital-item">
+                        <div class="hospital-info">
+                            <h6 class="hospital-name">{{ hospital.name }}</h6>
+                            <p class="hospital-location">{{ hospital.address or '주소 미등록' }}</p>
+                        </div>
+                        <div class="hospital-badge hospital-badge-{% if loop.index == 1 %}green{% elif loop.index == 2 %}blue{% else %}cyan{% endif %}">
+                            {{ hospital.patient_count }}명<br>{{ hospital.speciality or '종합병원' }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="hospital-item">
+                        <div class="hospital-info-center">
+                            <i class="bi bi-info-circle text-muted mb-2"></i>
+                            <p class="text-muted mb-0">병원 정보 없음</p>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {% if hospital_stats|length < 4 %}
+                <div class="hospital-item">
+                    <div class="hospital-info-center">
+                        <i class="bi bi-info-circle text-primary mb-2"></i>
+                        <p class="text-muted mb-0">상세 정보</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 빠른 액션 -->
+<div class="row">
+    <div class="col-12">
+        <div class="main-card">
+            <div class="action-card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning me-2"></i>
+                    빠른 액션
+                </h5>
+            </div>
+            <div class="action-buttons">
+                <div class="row">
+                    <div class="col-12">
+                        <a href="{{ url_for('add_patient') }}" class="action-btn action-btn-green">
+                            <i class="bi bi-person-plus"></i>
+                            새 환자 등록
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('list_patients') }}" class="action-btn action-btn-blue">
+                            <i class="bi bi-list"></i>
+                            전체 환자 목록
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateRanks() {
+    if (confirm('우선순위를 업데이트하시겠습니까?')) {
+        fetch('/api/update_ranks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('우선순위가 성공적으로 업데이트되었습니다.');
+                location.reload();
+            } else {
+                alert('우선순위 업데이트에 실패했습니다: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다.');
+        });
+    }
+}
+
+// 자동 새로고침 (5분마다)
+setInterval(function() {
+    fetch('/api/dashboard_stats')
+    .then(response => response.json())
+    .then(data => {
+        // 통계 업데이트 (필요시)
+        console.log('Stats updated:', data);
+    })
+    .catch(error => console.error('Auto-refresh error:', error));
+}, 300000); // 5분
+</script>
+{% endblock %}

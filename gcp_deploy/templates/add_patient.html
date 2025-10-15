@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}환자 등록 - 건양대학교병원{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="display-6">
+                <i class="bi bi-person-plus text-success"></i>
+                새 환자 등록
+            </h1>
+            <div>
+                <a href="{{ url_for('list_patients') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> 환자 목록으로
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person-plus"></i>
+                    환자 정보 입력
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_patient') }}">
+                    <div class="row">
+                        <!-- 환자 이름 -->
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">
+                                <i class="bi bi-person"></i> 환자 이름 <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   name="name" 
+                                   required 
+                                   placeholder="환자 이름을 입력하세요">
+                        </div>
+
+                        <!-- 나이 -->
+                        <div class="col-md-6 mb-3">
+                            <label for="age" class="form-label">
+                                <i class="bi bi-calendar"></i> 나이 <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="age" 
+                                   name="age" 
+                                   required 
+                                   min="0" 
+                                   max="150"
+                                   placeholder="나이를 입력하세요">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- 성별 -->
+                        <div class="col-md-6 mb-3">
+                            <label for="gender" class="form-label">
+                                <i class="bi bi-gender-ambiguous"></i> 성별
+                            </label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option value="">성별을 선택하세요 (선택사항)</option>
+                                <option value="남성">남성</option>
+                                <option value="여성">여성</option>
+                            </select>
+                        </div>
+
+                        <!-- 전화번호 -->
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="bi bi-telephone"></i> 전화번호
+                            </label>
+                            <input type="tel" 
+                                   class="form-control" 
+                                   id="phone" 
+                                   name="phone" 
+                                   placeholder="010-1234-5678">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- 병원 선택 -->
+                        <div class="col-md-6 mb-3">
+                            <label for="hospital_code" class="form-label">
+                                <i class="bi bi-building"></i> 병원 선택
+                            </label>
+                            <select class="form-select" id="hospital_code" name="hospital_code">
+                                <option value="">병원을 선택하세요 (선택사항)</option>
+                                {% for hospital in hospitals %}
+                                <option value="{{ hospital.code }}">
+                                    {{ hospital.name }} - {{ hospital.speciality }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- 질병 선택 -->
+                        <div class="col-md-6 mb-3">
+                            <label for="disease" class="form-label">
+                                <i class="bi bi-heart-pulse"></i> 질병 <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="disease" name="disease" required>
+                                <option value="">질병을 선택하세요</option>
+                                {% for disease in diseases %}
+                                <option value="{{ disease }}">{{ disease }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 중증도 -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-exclamation-triangle"></i> 중증도 <span class="text-danger">*</span>
+                        </label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <input type="radio" 
+                                               class="form-check-input" 
+                                               name="severity" 
+                                               value="1" 
+                                               id="severity1" 
+                                               required>
+                                        <label class="form-check-label ms-2" for="severity1">
+                                            <i class="bi bi-check-circle text-success"></i>
+                                            <strong>경증</strong>
+                                        </label>
+                                        <p class="small text-muted mt-2">일반적인 치료 필요</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-warning">
+                                    <div class="card-body text-center">
+                                        <input type="radio" 
+                                               class="form-check-input" 
+                                               name="severity" 
+                                               value="2" 
+                                               id="severity2" 
+                                               required>
+                                        <label class="form-check-label ms-2" for="severity2">
+                                            <i class="bi bi-exclamation-circle text-warning"></i>
+                                            <strong>중등도</strong>
+                                        </label>
+                                        <p class="small text-muted mt-2">집중 치료 필요</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-danger">
+                                    <div class="card-body text-center">
+                                        <input type="radio" 
+                                               class="form-check-input" 
+                                               name="severity" 
+                                               value="3" 
+                                               id="severity3" 
+                                               required>
+                                        <label class="form-check-label ms-2" for="severity3">
+                                            <i class="bi bi-exclamation-triangle text-danger"></i>
+                                            <strong>중증</strong>
+                                        </label>
+                                        <p class="small text-muted mt-2">응급 치료 필요</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 버튼 -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('list_patients') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> 취소
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-person-plus"></i> 환자 등록
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 도움말 카드 -->
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    등록 안내
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li><strong>필수 정보:</strong> 환자 이름, 나이, 질병, 중증도는 반드시 입력해야 합니다.</li>
+                    <li><strong>병원 선택:</strong> 선택사항이며, 미선택 시 기본 병원으로 설정됩니다.</li>
+                    <li><strong>중증도:</strong> 환자의 우선순위와 진료비 계산에 영향을 미칩니다.</li>
+                    <li><strong>자동 계산:</strong> 진료비와 우선순위는 입력 정보를 바탕으로 자동 계산됩니다.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 중증도 카드 클릭 시 라디오 버튼 선택
+document.querySelectorAll('.card input[name="severity"]').forEach(radio => {
+    const card = radio.closest('.card');
+    card.addEventListener('click', function() {
+        radio.checked = true;
+        
+        // 중증도 카드들에서만 선택 상태 제거
+        document.querySelectorAll('.card input[name="severity"]').forEach(r => {
+            r.closest('.card').classList.remove('bg-light');
+        });
+        // 현재 카드에 선택 상태 추가
+        this.classList.add('bg-light');
+    });
+});
+
+// 폼 유효성 검사
+document.querySelector('form').addEventListener('submit', function(e) {
+    const name = document.getElementById('name').value.trim();
+    const age = document.getElementById('age').value;
+    const disease = document.getElementById('disease').value;
+    const severity = document.querySelector('input[name="severity"]:checked');
+    
+    if (!name) {
+        alert('환자 이름을 입력해주세요.');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!age || age < 0 || age > 150) {
+        alert('올바른 나이를 입력해주세요.');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!disease) {
+        alert('질병을 선택해주세요.');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!severity) {
+        alert('중증도를 선택해주세요.');
+        e.preventDefault();
+        return;
+    }
+});
+</script>
+{% endblock %}
